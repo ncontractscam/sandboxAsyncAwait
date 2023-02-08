@@ -16,21 +16,28 @@ namespace AsyncSandbox
 
             var sw = new Stopwatch();
             sw.Start();
-            List<Task> tasks = Enumerable.Range(1, 10000)
-                .Select(z => Shared.Shared.PayloadSimulation(1000, myBag, z)).ToList();
+            List<Task> tasks = Enumerable.Range(1, 10)
+                .Select(z => Shared.Shared.PayloadSimulationWithException(1000, myBag, z)).ToList();
+            
+            var myTask = Task.WhenAll(tasks);
 
-            await Task.WhenAll(tasks);
+            try
+            {
+                myTask.Wait();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine($"We had {myTask.Exception.InnerExceptions.Count} exceptions thrown");
+            }
+
             sw.Stop();
 
-            var path = "C:/dev/testData.txt";
-            using (FileStream fs = File.Create(path))
 
-                foreach (var item in myBag)
-                {
-                    var value = item + "\n";
-                    byte[] info = new UTF8Encoding(true).GetBytes(value);
-                    fs.Write(info, 0, info.Length);                    
-                }
+            foreach (var item in myBag)
+            {
+                Console.WriteLine(item);
+            }
 
             Console.WriteLine($"Grand Total Runtime: {sw.ElapsedMilliseconds}");
         }
