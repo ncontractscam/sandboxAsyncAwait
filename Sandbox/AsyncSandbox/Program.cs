@@ -11,6 +11,7 @@ namespace AsyncSandbox
     {
         static async Task Main(string[] args)
         {
+            // test push
             var myBag = new ConcurrentBag<string>();
             myBag.Add("Starting Process");
 
